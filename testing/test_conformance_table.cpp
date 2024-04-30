@@ -25,6 +25,7 @@
  */
 
 #include <ofiq_lib.h>
+#include <ofiq_lib_impl.h>
 //#include "test_constants.h"
 #include "image_io.h"
 
@@ -112,7 +113,7 @@ std::shared_ptr<OFIQ::Interface> getOfiqImplInstance(
 {
 	if (!ofiqImplInstance)
 	{
-		ofiqImplInstance = OFIQ::Interface::getImplementation();
+		ofiqImplInstance = OFIQ::Interface::getImplementation<OFIQ_LIB::OFIQImpl>();
 		printf("Initializing OFIQ using config directory %s and config file %s\n",
 			configDir.c_str(), configFile.c_str());
 		ofiqInitResult = ofiqImplInstance->initialize(configDir, configFile);

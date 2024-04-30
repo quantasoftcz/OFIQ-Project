@@ -28,6 +28,7 @@
 #undef OFIQ_EXPORTS
 #endif
 
+#include "ofiq_lib_impl.h"
 #include "ofiq_lib.h"
 #include "image_io.h"
 #include "utils.h"
@@ -340,7 +341,7 @@ int main(int argc, char* argv[])
     }
 
     /* Get implementation pointer */
-    auto implPtr = Interface::getImplementation();
+    auto implPtr = Interface::getImplementation<OFIQImpl>();
     /* Initialization */
     auto ret = implPtr->initialize(
         configDir,

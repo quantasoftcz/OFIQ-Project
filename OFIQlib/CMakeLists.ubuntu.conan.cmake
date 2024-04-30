@@ -41,6 +41,7 @@ list(APPEND PUBLIC_HEADER_LIST
 )
 
 list(APPEND libImplementationSources 
+	${OFIQLIB_SOURCE_DIR}/src/OFIQLib.cpp
 	${OFIQLIB_SOURCE_DIR}/src/OFIQImpl.cpp
 	${OFIQLIB_SOURCE_DIR}/src/OFIQInitialization.cpp
 )
@@ -101,11 +102,19 @@ list(APPEND OFIQ_LINK_LIB_LIST
 )
 
 add_library(onnxruntime SHARED IMPORTED)
-set_target_properties(onnxruntime PROPERTIES
-IMPORTED_IMPLIB ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-linux-x64-1.14.1/lib/libonnxruntime.so
-IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-linux-x64-1.14.1/lib/libonnxruntime.so.1.14.1
-INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-linux-x64-1.14.1/include
-)
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64.*|AARCH64.*|arm64.*|ARM64.*)")
+	set_target_properties(onnxruntime PROPERTIES
+			IMPORTED_IMPLIB ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-linux-aarch64-1.14.1/lib/libonnxruntime.so
+			IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-linux-aarch64-1.14.1/lib/libonnxruntime.so.1.14.1
+			INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-linux-aarch64-1.14.1/include
+	)
+else ()
+	set_target_properties(onnxruntime PROPERTIES
+			IMPORTED_IMPLIB ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-linux-x64-1.14.1/lib/libonnxruntime.so
+			IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-linux-x64-1.14.1/lib/libonnxruntime.so.1.14.1
+			INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-linux-x64-1.14.1/include
+	)
+endif ()
 
 add_library (ofiq_objlib OBJECT
 	${module_sources}
@@ -130,6 +139,8 @@ add_executable(OFIQSampleApp ${OFIQLIB_SOURCE_DIR}/src/OFIQSampleApp.cpp)
 target_link_libraries(OFIQSampleApp
 	PRIVATE ofiq_lib
 	PRIVATE magic_enum::magic_enum
+	PRIVATE taocpp::json
+	PRIVATE opencv::opencv
 )
 
 

@@ -231,7 +231,3 @@ ReturnStatus OFIQImpl::vectorQuality(
     return ReturnStatus(ReturnCode::Success);
 }
 
-OFIQ_EXPORT std::shared_ptr<Interface> Interface::getImplementation()
-{
-    return std::make_shared<OFIQImpl>();
-}

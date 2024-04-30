@@ -30,6 +30,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <mutex>
 
 #include <ofiq_structs.h>
 
@@ -130,7 +131,24 @@ namespace OFIQ
          * 
          * @return std::shared_ptr<Interface> pointer to the implementation of the interface.
          */
-        OFIQ_EXPORT static std::shared_ptr<Interface> getImplementation();
+        template<class T>
+        OFIQ_EXPORT inline static std::shared_ptr<Interface> getImplementation(){
+            return std::make_shared<T>();
+        }
+
+        template<class T>
+        OFIQ_EXPORT inline static std::shared_ptr<Interface> getInstance(){
+            std::unique_lock<std::mutex> lck(instanceMtx);
+            if(!instance)
+                instance = std::shared_ptr<T>(new T);
+            return  instance;
+        }
+
+        OFIQ_EXPORT static std::shared_ptr<Interface> releaseInstance();
+
+        static std::shared_ptr<Interface> instance;
+        static std::mutex instanceMtx;
+
     };
 }
 
